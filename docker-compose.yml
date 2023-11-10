@@ -1,0 +1,43 @@
+version: '3.9'
+services:
+
+  dns:
+    build: 
+      context: ./dns
+    image: dns
+    container_name: jackson.asa.br
+    restart: always
+    tty: true
+    ports:
+      - "53:53/udp"
+      - "53:53/tcp"
+    networks:
+      - ac-network
+
+  web:
+    build: 
+      context: ./web
+    image: web
+    container_name: web
+    restart: always
+    tty: true
+    networks:
+      - ac-network
+
+  proxy:
+    build:
+      context: ./proxy
+    image: proxy
+    container_name: proxy
+    restart: always
+    tty: true
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+    networks:
+      - ac-network
+
+networks:
+  ac-network:
+    driver: bridge
